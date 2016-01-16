@@ -1,0 +1,19 @@
+{
+    "name": "relicsoflumen",
+    "main": "main.js",
+    "description": "The soundtrack to Izabella Pruska-Oldenhof's Relics of Lumen installation",
+    "version": "1.0.0",
+    "author": "Colin Clark",
+    "license": "BSD-3-Clause",
+    "repository": "git://github.com/colinbdclark/relics-of-lumen.git",
+    "bugs": "http://github.com/colinbdclark/relics-of-lumen/issues",
+    "homepage": "http://github.com/colinbdclark/relics-of-lumen",
+    "readmeFilename": "README.md",
+    "dependencies": {
+        "jquery": "2.2.0",
+        "infusion": "2.0.0-dev.20160115T165518Z.2f38c09",
+        "infusion-electron": "colinbdclark/infusion-electron#new-electron-api",
+        "flocking": "colinbdclark/flocking#82ed6acc8fec08725b4233a6fab2912bbd3549b2",
+        "walk": "2.3.9"
+    }
+}
