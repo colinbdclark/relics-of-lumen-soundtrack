@@ -25,7 +25,7 @@ fluid.defaults("relics.app", {
                     url: {
                         expander: {
                             funcName: "fluid.stringTemplate",
-                            args: ["%appRootURL/src/client/html/main-window.html", "{app}.env"]
+                            args: ["%url/src/client/html/main-window.html", "{app}.env.appRoot"]
                         }
                     },
 

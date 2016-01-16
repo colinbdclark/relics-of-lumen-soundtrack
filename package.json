@@ -14,6 +14,7 @@
         "infusion": "2.0.0-dev.20160115T165518Z.2f38c09",
         "infusion-electron": "colinbdclark/infusion-electron#new-electron-api",
         "flocking": "colinbdclark/flocking#82ed6acc8fec08725b4233a6fab2912bbd3549b2",
-        "walk": "2.3.9"
+        "walk": "2.3.9",
+        "file-url": "1.0.1"
     }
 }
