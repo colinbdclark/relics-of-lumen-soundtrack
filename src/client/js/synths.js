@@ -109,11 +109,17 @@ var fluid = fluid || require("infusion"),
 
     relic.band.scheduleLoop = function (band) {
         band.scheduler.repeat(12 * 60, function () {
-            var randomBufferPlayer = band.randomBufferPlayer;
-            randomBufferPlayer.get("grainDuration").onInputChanged();
-            randomBufferPlayer.get("triggerDensity").onInputChanged();
-            randomBufferPlayer.get("grainAmplitude").onInputChanged();
-            randomBufferPlayer.get("centerPositionLine").onInputChanged();
+            var randomBufferPlayer = band.randomBufferPlayer,
+                ugens = randomBufferPlayer.nodeList.nodes;
+
+            for (var i = 0; i < ugens.length; i++) {
+                var ugen = ugens[i],
+                    ugenType = ugen.options.ugenDef.ugen;
+
+                if (ugenType === "flock.ugen.line" || ugenType === "flock.ugen.xLine") {
+                    ugen.onInputChanged();
+                }
+            }
 
             flock.log.warn("Restarting lines.");
         });
