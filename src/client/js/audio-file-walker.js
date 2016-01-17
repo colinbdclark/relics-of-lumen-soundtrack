@@ -15,7 +15,7 @@ var fluid = fluid || require("infusion");
 
         // TODO: Make an "app proxy" component that represents
         // key application/environment features available in a web process.
-        directory: electron.getAppRootPath() + "audio",
+        directory: __dirname + "/../../../audio",
 
         walkerOptions: {
             followLinks: false
