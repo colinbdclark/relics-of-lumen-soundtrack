@@ -25,7 +25,7 @@ var fluid = fluid || require("infusion"),
                 ugen: "flock.ugen.line",
                 start: 1/15,
                 end: 15,
-                duration: 11 * 60
+                duration: 12 * 60
             },
             trigger: {
                 ugen: "flock.ugen.dust",
@@ -108,7 +108,7 @@ var fluid = fluid || require("infusion"),
     });
 
     relic.band.scheduleLoop = function (band) {
-        band.scheduler.repeat(12 * 60, function () {
+        band.scheduler.repeat(13 * 60, function () {
             var randomBufferPlayer = band.randomBufferPlayer,
                 ugens = randomBufferPlayer.nodeList.nodes;
 
