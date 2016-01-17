@@ -4,13 +4,27 @@ var fluid = fluid || require("infusion"),
 (function () {
     "use strict";
 
-    var relic = fluid.registerNamespace("relic"),
-        enviro = flock.init();
+    var relic = fluid.registerNamespace("relic");
 
-    enviro.play();
+    fluid.defaults("relic.bufferLoader", {
+        gradeNames: "flock.bufferLoader",
 
-    // TODO: Rename this once it becomes clear what we're actually doing.
-    fluid.defaults("relic.mainWindow", {
+        bufferDefs: "{audioFileManager}.model.inMemoryAudioFiles",
+
+        events: {
+            afterBuffersLoaded: "{audioFileManager}.events.onReady"
+        },
+
+        listeners: {
+            afterBuffersLoaded: {
+                funcName: "flock.log.warn",
+                args: ["Buffers have been loaded!"]
+            }
+        }
+    });
+
+
+    fluid.defaults("relic.audioFileManager", {
         gradeNames: "fluid.modelComponent",
 
         inMemoryRatio: 1/3,
@@ -27,23 +41,13 @@ var fluid = fluid || require("infusion"),
 
             bufferLoader: {
                 createOnEvent: "onFileURLsReady",
-                type: "flock.bufferLoader",
-                options: {
-                    bufferDefs: "{mainWindow}.model.inMemoryAudioFiles",
-
-                    listeners: {
-                        afterBuffersLoaded: {
-                            "this": "console",
-                            method: "log",
-                            args: ["Buffers have loaded!"]
-                        }
-                    }
-                }
+                type: "relic.bufferLoader"
             }
         },
 
         events: {
-            onFileURLsReady: "{audioFileWalker}.events.onComplete"
+            onFileURLsReady: "{audioFileWalker}.events.onComplete",
+            onReady: null
         },
 
         listeners: {
@@ -51,14 +55,18 @@ var fluid = fluid || require("infusion"),
             onFileURLsReady: [
                 {
                     priority: "first",
-                    funcName: "relic.mainWindow.shuffleAndSplitAudioFiles",
+                    funcName: "relic.audioFileManager.shuffleAndSplitAudioFiles",
                     args: ["{audioFileWalker}.model.audioFiles", "{that}"]
+                },
+                {
+                    funcName: "flock.log.warn",
+                    args: ["Loading audio buffers..."]
                 }
             ]
         }
     });
 
-    relic.mainWindow.shuffleAndSplitAudioFiles = function (audioFiles, that) {
+    relic.audioFileManager.shuffleAndSplitAudioFiles = function (audioFiles, that) {
         var shuffled = flock.shuffle(audioFiles),
             inMemoryLength = Math.round(audioFiles.length * that.options.inMemoryRatio),
             inMemoryAudioFiles = shuffled.slice(0, inMemoryLength),

@@ -11,14 +11,16 @@
         <script src="../../../node_modules/infusion-electron/src/core.js"></script>
         <script src="../../../node_modules/infusion-electron/src/ipc.js"></script>
         <script src="../js/audio-file-walker.js"></script>
-        <script src="../js/main-window.js"></script>
+        <script src="../js/audio-file-manager.js"></script>
+        <script src="../js/synths.js"></script>
+        <script src="../js/relics-player.js"></script>
     </head>
     <body>
         <h1>Relics of Lumen Soundtrack</h1>
 
         <audio id="audio-player" />
         <script>
-            window.mainWindow = relic.mainWindow();
+            window.relicPlayer = relic.player();
         </script>
     </body>
 </html>
