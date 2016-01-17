@@ -21,28 +21,46 @@ var fluid = fluid || require("infusion"),
             ugen: "flock.ugen.triggerGrains",
             buffer: null, // Specified when cloned from the template.
             dur: {
-                id: "grainDuration",
                 ugen: "flock.ugen.line",
+                rate: "control",
                 start: 1/15,
                 end: 15,
-                duration: 12 * 60
+                duration: 12 * 60,
+                mul: {
+                    ugen: "flock.ugen.whiteNoise",
+                    rate: "control",
+                    mul: 0.5,
+                    add: 1
+                }
             },
             trigger: {
                 ugen: "flock.ugen.dust",
                 density: {
-                    id: "triggerDensity",
                     ugen: "flock.ugen.xLine",
+                    rate: "control",
                     start: 1/5,
                     end: 1/50,
-                    duration: 9 * 60
+                    duration: 12 * 60,
+                    mul: {
+                        ugen: "flock.ugen.whiteNoise",
+                        rate: "control",
+                        mul: 0.2,
+                        add: 1
+                    }
                 }
             },
             amp: {
-                id: "grainAmplitude",
                 ugen: "flock.ugen.line",
+                rate: "control",
                 start: 0.1,
                 end: 0.02,
-                duration: 9 * 60
+                duration: 9 * 60,
+                mul: {
+                    ugen: "flock.ugen.whiteNoise",
+                    rate: "control",
+                    mul: 0.5,
+                    add: 1
+                }
             },
             centerPos: {
                 ugen: "flock.ugen.lfNoise",
@@ -57,7 +75,8 @@ var fluid = fluid || require("infusion"),
                     mul: {
                         id: "centerPositionLine",
                         ugen: "flock.ugen.xLine",
-                        start: 0.01,
+                        rate: "control",
+                        start: 0.1,
                         end: 1.0,
                         duration: 3 * 60
                     }
