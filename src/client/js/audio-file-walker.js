@@ -1,5 +1,4 @@
-var fluid = fluid || require("infusion"),
-    flock = flock || require("flocking");
+var fluid = fluid || require("infusion");
 
 (function () {
     "use strict";
@@ -7,13 +6,12 @@ var fluid = fluid || require("infusion"),
     var electron = fluid.registerNamespace("electron"),
         relic = fluid.registerNamespace("relic"),
         walk = require("walk"),
-        path = require("path"),
-        $ = fluid.registerNamespace("jQuery");
+        path = require("path");
 
     fluid.defaults("relic.audioFileWalker", {
         gradeNames: "fluid.modelComponent",
 
-        audioExtensions: ["mp4", "m4a", "mp3", "ogg", "oga", "wav", "aiff"],
+        audioExtensions: ["mp4", "m4a", "mp3", "ogg", "oga", "wav"],
 
         // TODO: Make an "app proxy" component that represents
         // key application/environment features available in a web process.
@@ -50,11 +48,6 @@ var fluid = fluid || require("infusion"),
                 priority: "last",
                 funcName: "relic.audioFileWalker.nextFile",
                 args: ["{arguments}.2"]
-            },
-
-            "onComplete.playAudio": {
-                funcName: "relic.audioFileWalker.playRandomURL",
-                args: "{that}.model.audioFiles"
             },
 
             "onComplete.unbindWalkerEvents": {
@@ -100,17 +93,5 @@ var fluid = fluid || require("infusion"),
         }
 
         that.applier.change("audioFiles", that.model.audioFiles);
-    };
-
-    relic.audioFileWalker.playRandomURL = function (audioFiles) {
-        if (!audioFiles || audioFiles.length < 1) {
-            return;
-        }
-
-        var randomURL = flock.choose(audioFiles),
-            player = $("#audio-player")[0];
-
-        player.src = randomURL;
-        player.play();
     };
 }());

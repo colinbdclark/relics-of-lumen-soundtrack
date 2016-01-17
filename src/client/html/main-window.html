@@ -8,7 +8,6 @@
             window.$ = window.jQuery = require("jquery");
         </script>
         <script src="../../../node_modules/flocking/dist/flocking-no-jquery.js"></script>
-        <script src="../../../node_modules/flocking/dist/flocking-audiofile-compatibility.js"></script>
         <script src="../../../node_modules/infusion-electron/src/core.js"></script>
         <script src="../../../node_modules/infusion-electron/src/ipc.js"></script>
         <script src="../js/audio-file-walker.js"></script>
@@ -19,7 +18,7 @@
 
         <audio id="audio-player" />
         <script>
-            relic.mainWindow();
+            window.mainWindow = relic.mainWindow();
         </script>
     </body>
 </html>
