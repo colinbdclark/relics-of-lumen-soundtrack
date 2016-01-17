@@ -6,24 +6,6 @@ var fluid = fluid || require("infusion"),
 
     var relic = fluid.registerNamespace("relic");
 
-    fluid.defaults("relic.interconnects", {
-        gradeNames: "fluid.component",
-
-        grainDuration: "@expand:{flock.enviro}.busManager.acquireNextBus(interconnect)",
-        numGrains: "@expand:{flock.enviro}.busManager.acquireNextBus(interconnect)"
-    });
-
-    fluid.defaults("relic.synth.grainDuration", {
-        gradeNames: "flock.synth",
-
-        synthDef: {
-            ugen: "flock.ugen.out",
-            bus: "{interconnects}.options.grainDuration",
-            expand: 1,
-            sources: 1
-        }
-    });
-
     fluid.defaults("relic.synth.randomBufferPlayer", {
         gradeNames: "flock.synth",
 
@@ -37,14 +19,49 @@ var fluid = fluid || require("infusion"),
 
         granulatorTemplate: {
             ugen: "flock.ugen.triggerGrains",
+            buffer: null, // Specified when cloned from the template.
             dur: {
-                rate: "control",
-                ugen: "flock.ugen.in",
-                bus: "{interconnects}.options.grainDuration"
+                id: "grainDuration",
+                ugen: "flock.ugen.line",
+                start: 1/15,
+                end: 15,
+                duration: 11 * 60
             },
             trigger: {
                 ugen: "flock.ugen.dust",
-                density: 1/60
+                density: {
+                    id: "triggerDensity",
+                    ugen: "flock.ugen.xLine",
+                    start: 1/5,
+                    end: 1/50,
+                    duration: 9 * 60
+                }
+            },
+            amp: {
+                id: "grainAmplitude",
+                ugen: "flock.ugen.line",
+                start: 0.1,
+                end: 0.02,
+                duration: 9 * 60
+            },
+            centerPos: {
+                ugen: "flock.ugen.lfNoise",
+                freq: 1/2,
+                options: {
+                    interpolation: "linear"
+                },
+                mul: {
+                    ugen: "flock.ugen.bufferDuration",
+                    rate: "control",
+                    buffer: null, // Specified when cloned from the template.
+                    mul: {
+                        id: "centerPositionLine",
+                        ugen: "flock.ugen.xLine",
+                        start: 0.01,
+                        end: 1.0,
+                        duration: 3 * 60
+                    }
+                }
             }
         },
 
@@ -63,6 +80,9 @@ var fluid = fluid || require("infusion"),
         return fluid.transform(bufferIDs, function (bufferID) {
             var ugenDef = fluid.copy(granulatorTemplate);
             ugenDef.buffer = bufferID;
+            ugenDef.centerPos.buffer = bufferID;
+            ugenDef.centerPos.mul.buffer = bufferID;
+
             return ugenDef;
         });
     };
@@ -72,23 +92,30 @@ var fluid = fluid || require("infusion"),
         gradeNames: "flock.band",
 
         components: {
-            interconnects: {
-                type: "relic.interconnects"
-            },
-
-            grainDuration: {
-                type: "relic.synth.grainDuration",
-                options: {
-                    addToEnvironment: 0
-                }
-            },
-
             randomBufferPlayer: {
-                type: "relic.synth.randomBufferPlayer",
+                type: "relic.synth.randomBufferPlayer"
+            },
+
+            scheduler: {
+                type: "flock.scheduler.async",
                 options: {
-                    addToEnvironment: 1
+                    listeners: {
+                        onCreate: "relic.band.scheduleLoop({band})"
+                    }
                 }
             }
         }
     });
+
+    relic.band.scheduleLoop = function (band) {
+        band.scheduler.repeat(12 * 60, function () {
+            var randomBufferPlayer = band.randomBufferPlayer;
+            randomBufferPlayer.get("grainDuration").onInputChanged();
+            randomBufferPlayer.get("triggerDensity").onInputChanged();
+            randomBufferPlayer.get("grainAmplitude").onInputChanged();
+            randomBufferPlayer.get("centerPositionLine").onInputChanged();
+
+            flock.log.warn("Restarting lines.");
+        });
+    };
 }());
