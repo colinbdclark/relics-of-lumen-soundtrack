@@ -36,11 +36,14 @@ var fluid = fluid || require("infusion"),
             trigger: {
                 ugen: "flock.ugen.dust",
                 density: {
-                    ugen: "flock.ugen.xLine",
+                    ugen: "flock.ugen.envGen",
                     rate: "control",
-                    start: 1/5,
-                    end: 1/50,
-                    duration: 12 * 60,
+                    gate: 1.0,
+                    envelope: {
+                        levels: [1/5, 1/50, 0],
+                        times: [12 * 60 + 30, 30],
+                        curve: ["exponential", "linear"]
+                    },
                     mul: {
                         ugen: "flock.ugen.whiteNoise",
                         rate: "control",
@@ -135,7 +138,7 @@ var fluid = fluid || require("infusion"),
                 var ugen = ugens[i],
                     ugenType = ugen.options.ugenDef.ugen;
 
-                if (ugenType === "flock.ugen.line" || ugenType === "flock.ugen.xLine") {
+                if (ugenType === "flock.ugen.line" || ugenType === "flock.ugen.xLine" || ugenType === "flock.ugen.envGen") {
                     ugen.onInputChanged();
                 }
             }
